@@ -10,7 +10,13 @@ import (
 )
 
 func GetOrderHistory(c *gin.Context) {
-	panic("implement me")
+	var orders []Order.Order
+
+	if err := Services.OrderServices.GetOrderHistory(&orders); err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	} else {
+		c.JSON(http.StatusOK, orders)
+	}
 }
 
 func PlaceOrder(c *gin.Context) {
@@ -43,5 +49,16 @@ func PlaceMultipleOrder(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	} else {
 		c.JSON(http.StatusOK, order)
+	}
+}
+
+func GetCustomerOrderHistory(c *gin.Context) {
+	var orders []Order.Order
+	id := c.Params.ByName("id")
+
+	if err := Services.OrderServices.GetCustomerOrderHistory(id, &orders); err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	} else {
+		c.JSON(http.StatusOK, orders)
 	}
 }

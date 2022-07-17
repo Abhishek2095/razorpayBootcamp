@@ -10,6 +10,7 @@ type OrderRepository interface {
 	GetAllOrders(orders *[]Order) error
 	Save(order *Order) error
 	GetOrderCount() int
+	GetAllOrdersOfCustomer(id string, orders *[]Order) error
 }
 
 var (
@@ -24,6 +25,13 @@ type Repo struct{}
 
 func NewRepo() OrderRepository {
 	return &Repo{}
+}
+
+func (repo *Repo) GetAllOrdersOfCustomer(id string, orders *[]Order) error {
+	if err := Config.DB.Where("customer_id = ?", id).Find(orders).Error; err != nil {
+		return errors.New("no records found")
+	}
+	return nil
 }
 
 func (repo *Repo) GetOrderById(id string, order *Order) error {

@@ -18,6 +18,7 @@ type ProductServiceInterface interface {
 	CreateProduct(product *Product.Product) error
 	GetAllProducts(products *[]Product.Product) error
 	GetProductById(id string, product *Product.Product) error
+	UpdateProduct(product *Product.Product) error
 }
 
 type ProductService struct {
@@ -47,6 +48,25 @@ func (productService *ProductService) CreateProduct(product *Product.Product) er
 		return err
 	}
 
+	return nil
+}
+
+func (productService *ProductService) UpdateProduct(product *Product.Product) error {
+	if product.Name == "" {
+		return ErrMissingProductName
+	}
+	if product.Price < 1 {
+		return ErrInvalidProductPrice
+	}
+
+	productExists := Product.Product{}
+	if err := productService.GetProductById(product.ID, &productExists); err != nil {
+		return err
+	}
+
+	if err := productService.repo.Save(product); err != nil {
+		return err
+	}
 	return nil
 }
 

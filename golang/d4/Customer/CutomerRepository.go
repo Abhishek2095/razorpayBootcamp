@@ -19,7 +19,7 @@ var (
 
 type Repo struct{}
 
-func GetDB() CustomerRepository {
+func NewRepo() CustomerRepository {
 	return &Repo{}
 }
 

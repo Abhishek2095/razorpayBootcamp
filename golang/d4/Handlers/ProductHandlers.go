@@ -23,7 +23,7 @@ func GetProductById(c *gin.Context) {
 	var product Product.Product
 
 	if err := Services.ProductServices.GetProductById(id, &product); err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		c.JSON(http.StatusNotFound, err)
 	} else {
 		c.JSON(http.StatusOK, product)
 	}
@@ -41,5 +41,12 @@ func AddProduct(c *gin.Context) {
 }
 
 func UpdateProduct(c *gin.Context) {
-	panic("implement me")
+	var product Product.Product
+	c.BindJSON(&product)
+
+	if err := Services.ProductServices.UpdateProduct(&product); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, product)
+	}
 }

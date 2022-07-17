@@ -23,6 +23,8 @@ type OrderServiceInterface interface {
 	CreateOrder(Order *Order.Order) error
 	GetOrderById(id string, product *Order.Order) error
 	CreateMultipleOrders(Orders *DTO.MultipleOrder) error
+	GetCustomerOrderHistory(id string, orders *[]Order.Order) error
+	GetOrderHistory(orders *[]Order.Order) error
 }
 
 type OrderService struct {
@@ -31,6 +33,20 @@ type OrderService struct {
 
 func NewOrderService(repository Order.OrderRepository) {
 	OrderServices = &OrderService{repo: repository}
+}
+
+func (orderService *OrderService) GetOrderHistory(orders *[]Order.Order) error {
+	if err := orderService.repo.GetAllOrders(orders); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (orderService *OrderService) GetCustomerOrderHistory(id string, orders *[]Order.Order) error {
+	if err := orderService.repo.GetAllOrdersOfCustomer(id, orders); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (orderService *OrderService) CreateOrder(Order *Order.Order) error {
@@ -61,7 +77,7 @@ func (orderService *OrderService) CreateOrder(Order *Order.Order) error {
 		return ErrQuantityNotAvailable
 	} else {
 		product.Quantity -= Order.Quantity
-		ProductServices.CreateProduct(&product)
+		ProductServices.UpdateProduct(&product)
 	}
 
 	OrderCount := orderService.repo.GetOrderCount() + 1

@@ -6,6 +6,7 @@ import (
 	"ecommerce/Order"
 	"ecommerce/Product"
 	"ecommerce/Routes"
+	"ecommerce/Services"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,10 @@ func main() {
 
 	Config.DB.AutoMigrate(&Customer.Customer{}, &Order.Order{}, &Product.Product{})
 	r := Routes.SetupRouter()
+
+	Services.NewProductService(Product.NewRepo())
+	Services.NewCustomerService(Customer.NewRepo())
+	Services.NewOrderService(Order.NewRepo())
 
 	//running
 	err := r.Run()
